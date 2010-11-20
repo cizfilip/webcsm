@@ -1,0 +1,223 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="webcsmModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="webcsmModelStoreContainer">
+          <EntitySet Name="Groups" EntityType="webcsmModel.Store.Groups" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="ProjectMembers" EntityType="webcsmModel.Store.ProjectMembers" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Projects" EntityType="webcsmModel.Store.Projects" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="ProjectsInGroups" EntityType="webcsmModel.Store.ProjectsInGroups" store:Type="Tables" Schema="dbo" />
+          <AssociationSet Name="FK_ProjectMembers_Projects" Association="webcsmModel.Store.FK_ProjectMembers_Projects">
+            <End Role="Projects" EntitySet="Projects" />
+            <End Role="ProjectMembers" EntitySet="ProjectMembers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProjectsInGroups_Groups" Association="webcsmModel.Store.FK_ProjectsInGroups_Groups">
+            <End Role="Groups" EntitySet="Groups" />
+            <End Role="ProjectsInGroups" EntitySet="ProjectsInGroups" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProjectsInGroups_Projects" Association="webcsmModel.Store.FK_ProjectsInGroups_Projects">
+            <End Role="Projects" EntitySet="Projects" />
+            <End Role="ProjectsInGroups" EntitySet="ProjectsInGroups" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Groups">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="30" />
+          <Property Name="UserName" Type="nvarchar" Nullable="false" MaxLength="256" />
+        </EntityType>
+        <EntityType Name="ProjectMembers">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ProjectID" Type="int" Nullable="false" />
+          <Property Name="UserName" Type="nvarchar" Nullable="false" MaxLength="256" />
+        </EntityType>
+        <EntityType Name="Projects">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="Description" Type="nvarchar" Nullable="false" MaxLength="256" />
+          <Property Name="LeaderName" Type="nvarchar" Nullable="false" MaxLength="256" />
+        </EntityType>
+        <EntityType Name="ProjectsInGroups">
+          <Key>
+            <PropertyRef Name="ProjectID" />
+            <PropertyRef Name="GroupID" />
+          </Key>
+          <Property Name="ProjectID" Type="int" Nullable="false" />
+          <Property Name="GroupID" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_ProjectMembers_Projects">
+          <End Role="Projects" Type="webcsmModel.Store.Projects" Multiplicity="1" />
+          <End Role="ProjectMembers" Type="webcsmModel.Store.ProjectMembers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Projects">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ProjectMembers">
+              <PropertyRef Name="ProjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProjectsInGroups_Groups">
+          <End Role="Groups" Type="webcsmModel.Store.Groups" Multiplicity="1" />
+          <End Role="ProjectsInGroups" Type="webcsmModel.Store.ProjectsInGroups" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Groups">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ProjectsInGroups">
+              <PropertyRef Name="GroupID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProjectsInGroups_Projects">
+          <End Role="Projects" Type="webcsmModel.Store.Projects" Multiplicity="1" />
+          <End Role="ProjectsInGroups" Type="webcsmModel.Store.ProjectsInGroups" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Projects">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ProjectsInGroups">
+              <PropertyRef Name="ProjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="webcsmModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="webcsmEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Groups" EntityType="webcsmModel.Group" />
+          <EntitySet Name="ProjectMembers" EntityType="webcsmModel.ProjectMember" />
+          <EntitySet Name="Projects" EntityType="webcsmModel.Project" />
+          <AssociationSet Name="FK_ProjectMembers_Projects" Association="webcsmModel.FK_ProjectMembers_Projects">
+            <End Role="Projects" EntitySet="Projects" />
+            <End Role="ProjectMembers" EntitySet="ProjectMembers" />
+          </AssociationSet>
+          <AssociationSet Name="ProjectsInGroups" Association="webcsmModel.ProjectsInGroups">
+            <End Role="Groups" EntitySet="Groups" />
+            <End Role="Projects" EntitySet="Projects" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Group">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="30" Unicode="true" FixedLength="false" />
+          <Property Name="UserName" Type="String" Nullable="false" MaxLength="256" Unicode="true" FixedLength="false" />
+          <NavigationProperty Name="Projects" Relationship="webcsmModel.ProjectsInGroups" FromRole="Groups" ToRole="Projects" />
+        </EntityType>
+        <EntityType Name="ProjectMember">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProjectID" Type="Int32" Nullable="false" />
+          <Property Name="UserName" Type="String" Nullable="false" MaxLength="256" Unicode="true" FixedLength="false" />
+          <NavigationProperty Name="Project" Relationship="webcsmModel.FK_ProjectMembers_Projects" FromRole="ProjectMembers" ToRole="Projects" />
+        </EntityType>
+        <EntityType Name="Project">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="256" Unicode="true" FixedLength="false" />
+          <Property Name="LeaderName" Type="String" Nullable="false" MaxLength="256" Unicode="true" FixedLength="false" />
+          <NavigationProperty Name="ProjectMembers" Relationship="webcsmModel.FK_ProjectMembers_Projects" FromRole="Projects" ToRole="ProjectMembers" />
+          <NavigationProperty Name="Groups" Relationship="webcsmModel.ProjectsInGroups" FromRole="Projects" ToRole="Groups" />
+        </EntityType>
+        <Association Name="FK_ProjectMembers_Projects">
+          <End Role="Projects" Type="webcsmModel.Project" Multiplicity="1" />
+          <End Role="ProjectMembers" Type="webcsmModel.ProjectMember" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Projects">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ProjectMembers">
+              <PropertyRef Name="ProjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ProjectsInGroups">
+          <End Role="Groups" Type="webcsmModel.Group" Multiplicity="*" />
+          <End Role="Projects" Type="webcsmModel.Project" Multiplicity="*" />
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="webcsmModelStoreContainer" CdmEntityContainer="webcsmEntities">
+          <EntitySetMapping Name="Groups"><EntityTypeMapping TypeName="webcsmModel.Group"><MappingFragment StoreEntitySet="Groups">
+            <ScalarProperty Name="Id" ColumnName="Id" />
+            <ScalarProperty Name="Name" ColumnName="Name" />
+            <ScalarProperty Name="UserName" ColumnName="UserName" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="ProjectMembers"><EntityTypeMapping TypeName="webcsmModel.ProjectMember"><MappingFragment StoreEntitySet="ProjectMembers">
+            <ScalarProperty Name="Id" ColumnName="Id" />
+            <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
+            <ScalarProperty Name="UserName" ColumnName="UserName" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="Projects"><EntityTypeMapping TypeName="webcsmModel.Project"><MappingFragment StoreEntitySet="Projects">
+            <ScalarProperty Name="Id" ColumnName="Id" />
+            <ScalarProperty Name="Name" ColumnName="Name" />
+            <ScalarProperty Name="Description" ColumnName="Description" />
+            <ScalarProperty Name="LeaderName" ColumnName="LeaderName" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <AssociationSetMapping Name="ProjectsInGroups" TypeName="webcsmModel.ProjectsInGroups" StoreEntitySet="ProjectsInGroups">
+            <EndProperty Name="Groups">
+              <ScalarProperty Name="Id" ColumnName="GroupID" />
+            </EndProperty>
+            <EndProperty Name="Projects">
+              <ScalarProperty Name="Id" ColumnName="ProjectID" />
+            </EndProperty>
+          </AssociationSetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="False" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams>
+      <Diagram Name="webcsm">
+        <EntityTypeShape EntityType="webcsmModel.Group" Width="1.5" PointX="0.75" PointY="1.125" Height="1.7879850260416672" IsExpanded="true" />
+        <EntityTypeShape EntityType="webcsmModel.ProjectMember" Width="1.5" PointX="5.25" PointY="1.125" Height="1.7879850260416674" IsExpanded="true" />
+        <EntityTypeShape EntityType="webcsmModel.Project" Width="1.5" PointX="3" PointY="0.875" Height="2.1725878906249996" IsExpanded="true" />
+        <AssociationConnector Association="webcsmModel.FK_ProjectMembers_Projects" ManuallyRouted="false">
+          <ConnectorPoint PointX="4.5" PointY="2.0189925130208337" />
+          <ConnectorPoint PointX="5.25" PointY="2.0189925130208337" />
+        </AssociationConnector>
+        <AssociationConnector Association="webcsmModel.ProjectsInGroups" ManuallyRouted="false">
+          <ConnectorPoint PointX="2.25" PointY="2.0189925130208337" />
+          <ConnectorPoint PointX="3" PointY="2.0189925130208337" />
+        </AssociationConnector>
+      </Diagram>
+    </Diagrams>
+  </Designer>
+</edmx:Edmx>
