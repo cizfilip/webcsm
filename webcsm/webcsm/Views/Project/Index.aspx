@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<webcsm.ViewModels.ProjectViewModel>" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<webcsm.Models.Group>>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
     Index
@@ -10,10 +10,10 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
     
     <div id="accordion">
-        <% foreach (var item in Model.Groups)
+        <% foreach (var item in Model)
            { %>
         <div class="accordionButton">
-            <%: item.Group.Name %>
+            <%: item.Name %>
         </div>
         <div class="accordionContent">
             <ul>

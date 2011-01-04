@@ -7,24 +7,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 
 
-    <% using (Html.BeginForm()) {%>
-        <%: Html.ValidationSummary(true) %>
-
-        <fieldset>
-            <legend>Create project group</legend>
-                        
-            <div>
-                <%: Html.LabelFor(model => model.Name) %>
-                <%: Html.TextBoxFor(model => model.Name) %>
-                <%: Html.ValidationMessageFor(model => model.Name) %>
-            </div>
-            
-            <p>
-                <input type="submit" value="Create" />
-            </p>
-        </fieldset>
-
-    <% } %>
+    <% Html.RenderPartial("GroupUserControl"); %>
 
     <div>
         <%: Html.ActionLink("Back to Projects", "Index") %>
@@ -33,6 +16,8 @@
 </asp:Content>
 
 <asp:Content ID="Content3" ContentPlaceHolderID="HeadContent" runat="server">
+<%= Html.Script("jquery.validate.min.js")%>
+<%= Html.Script("MicrosoftMvcJQueryValidation.js")%>
 </asp:Content>
 
 <asp:Content ID="Content4" ContentPlaceHolderID="NavigationContent" runat="server">

@@ -5,6 +5,7 @@
 </asp:Content>
 <asp:Content ID="loginHeader" ContentPlaceHolderID="HeadContent" runat="server">
     <%= Html.Script("openIdUrl.js")%>
+    
 </asp:Content>
 <asp:Content ID="loginContent" ContentPlaceHolderID="MainContent" runat="server">
     <%: Html.ValidationSummary(true, "Login was unsuccessful. Please correct the errors and try again.") %>

@@ -52,14 +52,10 @@ namespace webcsm.Controllers
                     
                         var request = openid.CreateRequest(Request.Form["openid_identifier"]);
                         var fetch = new FetchRequest();
-                        //fetch.Attributes.Add(new AttributeRequest("http://schema.openid.net/contact/email"));
+
                         fetch.Attributes.Add(new AttributeRequest(WellKnownAttributes.Contact.Email, true));
                         request.AddExtension(fetch);
-                        
-                        //request.AddExtension(new ClaimsRequest
-                        //{
-                        //    Email = DemandLevel.Request
-                        //});
+
                         return request.RedirectingResponse.AsActionResult();
                     }
                     catch (ProtocolException ex)
@@ -83,7 +79,8 @@ namespace webcsm.Controllers
                         MembershipUser user = MembershipService.GetUser(response);
                         if (user != null)
                         {
-                            FormsService.SignIn(user.UserName, true);
+                            var authCookie = FormsService.SignInEmailCookie(user.UserName, user.Email, false);
+                            Response.Cookies.Add(authCookie);
                         }
                         else
                         {
@@ -109,7 +106,8 @@ namespace webcsm.Controllers
 
                             if (createStatus == MembershipCreateStatus.Success)
                             {
-                                FormsService.SignIn(model.UserName, false /* createPersistentCookie */);
+                                var authCookie = FormsService.SignInEmailCookie(model.UserName, model.Email, false);
+                                Response.Cookies.Add(authCookie);
                                 return RedirectToAction("Index", "Home");
                             }
                             else
@@ -157,7 +155,8 @@ namespace webcsm.Controllers
             {
                 if (MembershipService.ValidateUser(model.UserName, model.Password))
                 {
-                    FormsService.SignIn(model.UserName, model.RememberMe);
+                    var authCookie = FormsService.SignInEmailCookie(model.UserName, Membership.GetUser(model.UserName).Email, model.RememberMe);
+                    Response.Cookies.Add(authCookie);
                     if (!String.IsNullOrEmpty(returnUrl))
                     {
                         return Redirect(returnUrl);
@@ -208,7 +207,8 @@ namespace webcsm.Controllers
 
                 if (createStatus == MembershipCreateStatus.Success)
                 {
-                    FormsService.SignIn(model.UserName, false /* createPersistentCookie */);
+                    var authCookie = FormsService.SignInEmailCookie(model.UserName, model.Email, false);
+                    Response.Cookies.Add(authCookie);
                     return RedirectToAction("Index", "Home");
                 }
                 else

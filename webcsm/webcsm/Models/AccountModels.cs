@@ -168,6 +168,7 @@ namespace webcsm.Models
     public interface IFormsAuthenticationService
     {
         void SignIn(string userName, bool createPersistentCookie);
+        HttpCookie SignInEmailCookie(string userName, string email, bool createPersistentCookie);
         void SignOut();
     }
 
@@ -184,6 +185,23 @@ namespace webcsm.Models
         {
             FormsAuthentication.SignOut();
         }
+
+        public HttpCookie SignInEmailCookie(string userName, string email, bool createPersistentCookie)
+        {
+
+
+            HttpCookie authCookie = FormsAuthentication.GetAuthCookie(userName, createPersistentCookie);
+
+            FormsAuthenticationTicket ticket = FormsAuthentication.Decrypt(authCookie.Value);
+
+            FormsAuthenticationTicket newTicket = new FormsAuthenticationTicket(ticket.Version, ticket.Name, ticket.IssueDate, ticket.Expiration, ticket.IsPersistent, email);
+
+            authCookie.Value = FormsAuthentication.Encrypt(newTicket);
+
+            return authCookie;
+            
+        }
+
     }
     #endregion
 

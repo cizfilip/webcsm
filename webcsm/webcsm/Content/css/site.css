@@ -33,7 +33,7 @@ ul
 }
 
 /* FORM */
-form {
+/*form {
 	margin-top:40px;
 	
 
@@ -110,7 +110,7 @@ input[type=submit]:active {
    border-top-color: #1b435e;
    background: #1b435e;
 }
-
+*/
 #btnGoogleLogin
 {
     visibility:hidden;
@@ -380,4 +380,11 @@ div.loginbox{
 .validation-summary-valid
 {
     display: none;
+}
+
+
+
+#hidden 
+{
+    display:none;
 }

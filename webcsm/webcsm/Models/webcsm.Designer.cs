@@ -18,8 +18,10 @@ using System.Runtime.Serialization;
 [assembly: EdmSchemaAttribute()]
 #region EDM Relationship Metadata
 
-[assembly: EdmRelationshipAttribute("webcsmModel", "FK_ProjectMembers_Projects", "Projects", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(webcsm.Models.Project), "ProjectMembers", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(webcsm.Models.ProjectMember), true)]
-[assembly: EdmRelationshipAttribute("webcsmModel", "ProjectsInGroups", "Groups", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(webcsm.Models.Group), "Projects", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(webcsm.Models.Project))]
+[assembly: EdmRelationshipAttribute("webcsmModel", "FK_Projects_Groups", "Groups", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(webcsm.Models.Group), "Projects", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(webcsm.Models.Project), true)]
+[assembly: EdmRelationshipAttribute("webcsmModel", "UsersInProjects", "Projects", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(webcsm.Models.Project), "Users", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(webcsm.Models.User))]
+[assembly: EdmRelationshipAttribute("webcsmModel", "FK_Groups_Users", "User", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(webcsm.Models.User), "Group", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(webcsm.Models.Group), true)]
+[assembly: EdmRelationshipAttribute("webcsmModel", "FK_Projects_Users", "User", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(webcsm.Models.User), "Project", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(webcsm.Models.Project), true)]
 
 #endregion
 
@@ -90,22 +92,6 @@ namespace webcsm.Models
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        public ObjectSet<ProjectMember> ProjectMembers
-        {
-            get
-            {
-                if ((_ProjectMembers == null))
-                {
-                    _ProjectMembers = base.CreateObjectSet<ProjectMember>("ProjectMembers");
-                }
-                return _ProjectMembers;
-            }
-        }
-        private ObjectSet<ProjectMember> _ProjectMembers;
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
         public ObjectSet<Project> Projects
         {
             get
@@ -118,6 +104,22 @@ namespace webcsm.Models
             }
         }
         private ObjectSet<Project> _Projects;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<User> Users
+        {
+            get
+            {
+                if ((_Users == null))
+                {
+                    _Users = base.CreateObjectSet<User>("Users");
+                }
+                return _Users;
+            }
+        }
+        private ObjectSet<User> _Users;
 
         #endregion
         #region AddTo Methods
@@ -131,19 +133,19 @@ namespace webcsm.Models
         }
     
         /// <summary>
-        /// Deprecated Method for adding a new object to the ProjectMembers EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
-        /// </summary>
-        public void AddToProjectMembers(ProjectMember projectMember)
-        {
-            base.AddObject("ProjectMembers", projectMember);
-        }
-    
-        /// <summary>
         /// Deprecated Method for adding a new object to the Projects EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
         public void AddToProjects(Project project)
         {
             base.AddObject("Projects", project);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the Users EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToUsers(User user)
+        {
+            base.AddObject("Users", user);
         }
 
         #endregion
@@ -169,13 +171,13 @@ namespace webcsm.Models
         /// </summary>
         /// <param name="id">Initial value of the Id property.</param>
         /// <param name="name">Initial value of the Name property.</param>
-        /// <param name="userName">Initial value of the UserName property.</param>
-        public static Group CreateGroup(global::System.Int32 id, global::System.String name, global::System.String userName)
+        /// <param name="userId">Initial value of the UserId property.</param>
+        public static Group CreateGroup(global::System.Int32 id, global::System.String name, global::System.Int32 userId)
         {
             Group group = new Group();
             group.Id = id;
             group.Name = name;
-            group.UserName = userName;
+            group.UserId = userId;
             return group;
         }
 
@@ -238,24 +240,24 @@ namespace webcsm.Models
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
-        public global::System.String UserName
+        public global::System.Int32 UserId
         {
             get
             {
-                return _UserName;
+                return _UserId;
             }
             set
             {
-                OnUserNameChanging(value);
-                ReportPropertyChanging("UserName");
-                _UserName = StructuralObject.SetValidValue(value, false);
-                ReportPropertyChanged("UserName");
-                OnUserNameChanged();
+                OnUserIdChanging(value);
+                ReportPropertyChanging("UserId");
+                _UserId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("UserId");
+                OnUserIdChanged();
             }
         }
-        private global::System.String _UserName;
-        partial void OnUserNameChanging(global::System.String value);
-        partial void OnUserNameChanged();
+        private global::System.Int32 _UserId;
+        partial void OnUserIdChanging(global::System.Int32 value);
+        partial void OnUserIdChanged();
 
         #endregion
     
@@ -267,18 +269,56 @@ namespace webcsm.Models
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("webcsmModel", "ProjectsInGroups", "Projects")]
+        [EdmRelationshipNavigationPropertyAttribute("webcsmModel", "FK_Projects_Groups", "Projects")]
         public EntityCollection<Project> Projects
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Project>("webcsmModel.ProjectsInGroups", "Projects");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Project>("webcsmModel.FK_Projects_Groups", "Projects");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Project>("webcsmModel.ProjectsInGroups", "Projects", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Project>("webcsmModel.FK_Projects_Groups", "Projects", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("webcsmModel", "FK_Groups_Users", "User")]
+        public User User
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<User>("webcsmModel.FK_Groups_Users", "User").Value;
+            }
+            set
+            {
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<User>("webcsmModel.FK_Groups_Users", "User").Value = value;
+            }
+        }
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [BrowsableAttribute(false)]
+        [DataMemberAttribute()]
+        public EntityReference<User> UserReference
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<User>("webcsmModel.FK_Groups_Users", "User");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<User>("webcsmModel.FK_Groups_Users", "User", value);
                 }
             }
         }
@@ -302,14 +342,16 @@ namespace webcsm.Models
         /// <param name="id">Initial value of the Id property.</param>
         /// <param name="name">Initial value of the Name property.</param>
         /// <param name="description">Initial value of the Description property.</param>
-        /// <param name="leaderName">Initial value of the LeaderName property.</param>
-        public static Project CreateProject(global::System.Int32 id, global::System.String name, global::System.String description, global::System.String leaderName)
+        /// <param name="groupId">Initial value of the GroupId property.</param>
+        /// <param name="leaderId">Initial value of the LeaderId property.</param>
+        public static Project CreateProject(global::System.Int32 id, global::System.String name, global::System.String description, global::System.Int32 groupId, global::System.Int32 leaderId)
         {
             Project project = new Project();
             project.Id = id;
             project.Name = name;
             project.Description = description;
-            project.LeaderName = leaderName;
+            project.GroupId = groupId;
+            project.LeaderId = leaderId;
             return project;
         }
 
@@ -396,24 +438,48 @@ namespace webcsm.Models
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
-        public global::System.String LeaderName
+        public global::System.Int32 GroupId
         {
             get
             {
-                return _LeaderName;
+                return _GroupId;
             }
             set
             {
-                OnLeaderNameChanging(value);
-                ReportPropertyChanging("LeaderName");
-                _LeaderName = StructuralObject.SetValidValue(value, false);
-                ReportPropertyChanged("LeaderName");
-                OnLeaderNameChanged();
+                OnGroupIdChanging(value);
+                ReportPropertyChanging("GroupId");
+                _GroupId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("GroupId");
+                OnGroupIdChanged();
             }
         }
-        private global::System.String _LeaderName;
-        partial void OnLeaderNameChanging(global::System.String value);
-        partial void OnLeaderNameChanged();
+        private global::System.Int32 _GroupId;
+        partial void OnGroupIdChanging(global::System.Int32 value);
+        partial void OnGroupIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 LeaderId
+        {
+            get
+            {
+                return _LeaderId;
+            }
+            set
+            {
+                OnLeaderIdChanging(value);
+                ReportPropertyChanging("LeaderId");
+                _LeaderId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("LeaderId");
+                OnLeaderIdChanged();
+            }
+        }
+        private global::System.Int32 _LeaderId;
+        partial void OnLeaderIdChanging(global::System.Int32 value);
+        partial void OnLeaderIdChanged();
 
         #endregion
     
@@ -425,18 +491,34 @@ namespace webcsm.Models
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("webcsmModel", "FK_ProjectMembers_Projects", "ProjectMembers")]
-        public EntityCollection<ProjectMember> ProjectMembers
+        [EdmRelationshipNavigationPropertyAttribute("webcsmModel", "FK_Projects_Groups", "Groups")]
+        public Group Group
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<ProjectMember>("webcsmModel.FK_ProjectMembers_Projects", "ProjectMembers");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Group>("webcsmModel.FK_Projects_Groups", "Groups").Value;
+            }
+            set
+            {
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Group>("webcsmModel.FK_Projects_Groups", "Groups").Value = value;
+            }
+        }
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [BrowsableAttribute(false)]
+        [DataMemberAttribute()]
+        public EntityReference<Group> GroupReference
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Group>("webcsmModel.FK_Projects_Groups", "Groups");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<ProjectMember>("webcsmModel.FK_ProjectMembers_Projects", "ProjectMembers", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Group>("webcsmModel.FK_Projects_Groups", "Groups", value);
                 }
             }
         }
@@ -447,18 +529,56 @@ namespace webcsm.Models
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("webcsmModel", "ProjectsInGroups", "Groups")]
-        public EntityCollection<Group> Groups
+        [EdmRelationshipNavigationPropertyAttribute("webcsmModel", "UsersInProjects", "Users")]
+        public EntityCollection<User> Users
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Group>("webcsmModel.ProjectsInGroups", "Groups");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<User>("webcsmModel.UsersInProjects", "Users");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Group>("webcsmModel.ProjectsInGroups", "Groups", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<User>("webcsmModel.UsersInProjects", "Users", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("webcsmModel", "FK_Projects_Users", "User")]
+        public User Leader
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<User>("webcsmModel.FK_Projects_Users", "User").Value;
+            }
+            set
+            {
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<User>("webcsmModel.FK_Projects_Users", "User").Value = value;
+            }
+        }
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [BrowsableAttribute(false)]
+        [DataMemberAttribute()]
+        public EntityReference<User> LeaderReference
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<User>("webcsmModel.FK_Projects_Users", "User");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<User>("webcsmModel.FK_Projects_Users", "User", value);
                 }
             }
         }
@@ -469,26 +589,36 @@ namespace webcsm.Models
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>
-    [EdmEntityTypeAttribute(NamespaceName="webcsmModel", Name="ProjectMember")]
+    [EdmEntityTypeAttribute(NamespaceName="webcsmModel", Name="User")]
     [Serializable()]
     [DataContractAttribute(IsReference=true)]
-    public partial class ProjectMember : EntityObject
+    public partial class User : EntityObject
     {
         #region Factory Method
     
         /// <summary>
-        /// Create a new ProjectMember object.
+        /// Create a new User object.
         /// </summary>
-        /// <param name="id">Initial value of the Id property.</param>
-        /// <param name="projectID">Initial value of the ProjectID property.</param>
+        /// <param name="userId">Initial value of the UserId property.</param>
         /// <param name="userName">Initial value of the UserName property.</param>
-        public static ProjectMember CreateProjectMember(global::System.Int32 id, global::System.Int32 projectID, global::System.String userName)
+        /// <param name="passwordHash">Initial value of the PasswordHash property.</param>
+        /// <param name="passwordSalt">Initial value of the PasswordSalt property.</param>
+        /// <param name="email">Initial value of the Email property.</param>
+        /// <param name="enabled">Initial value of the Enabled property.</param>
+        /// <param name="dateCreated">Initial value of the DateCreated property.</param>
+        /// <param name="dateLastPasswordChange">Initial value of the DateLastPasswordChange property.</param>
+        public static User CreateUser(global::System.Int32 userId, global::System.String userName, global::System.String passwordHash, global::System.String passwordSalt, global::System.String email, global::System.Boolean enabled, global::System.DateTime dateCreated, global::System.DateTime dateLastPasswordChange)
         {
-            ProjectMember projectMember = new ProjectMember();
-            projectMember.Id = id;
-            projectMember.ProjectID = projectID;
-            projectMember.UserName = userName;
-            return projectMember;
+            User user = new User();
+            user.UserId = userId;
+            user.UserName = userName;
+            user.PasswordHash = passwordHash;
+            user.PasswordSalt = passwordSalt;
+            user.Email = email;
+            user.Enabled = enabled;
+            user.DateCreated = dateCreated;
+            user.DateLastPasswordChange = dateLastPasswordChange;
+            return user;
         }
 
         #endregion
@@ -499,51 +629,27 @@ namespace webcsm.Models
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
         [DataMemberAttribute()]
-        public global::System.Int32 Id
+        public global::System.Int32 UserId
         {
             get
             {
-                return _Id;
+                return _UserId;
             }
             set
             {
-                if (_Id != value)
+                if (_UserId != value)
                 {
-                    OnIdChanging(value);
-                    ReportPropertyChanging("Id");
-                    _Id = StructuralObject.SetValidValue(value);
-                    ReportPropertyChanged("Id");
-                    OnIdChanged();
+                    OnUserIdChanging(value);
+                    ReportPropertyChanging("UserId");
+                    _UserId = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("UserId");
+                    OnUserIdChanged();
                 }
             }
         }
-        private global::System.Int32 _Id;
-        partial void OnIdChanging(global::System.Int32 value);
-        partial void OnIdChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Int32 ProjectID
-        {
-            get
-            {
-                return _ProjectID;
-            }
-            set
-            {
-                OnProjectIDChanging(value);
-                ReportPropertyChanging("ProjectID");
-                _ProjectID = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("ProjectID");
-                OnProjectIDChanged();
-            }
-        }
-        private global::System.Int32 _ProjectID;
-        partial void OnProjectIDChanging(global::System.Int32 value);
-        partial void OnProjectIDChanged();
+        private global::System.Int32 _UserId;
+        partial void OnUserIdChanging(global::System.Int32 value);
+        partial void OnUserIdChanged();
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -568,6 +674,222 @@ namespace webcsm.Models
         private global::System.String _UserName;
         partial void OnUserNameChanging(global::System.String value);
         partial void OnUserNameChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String PasswordHash
+        {
+            get
+            {
+                return _PasswordHash;
+            }
+            set
+            {
+                OnPasswordHashChanging(value);
+                ReportPropertyChanging("PasswordHash");
+                _PasswordHash = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("PasswordHash");
+                OnPasswordHashChanged();
+            }
+        }
+        private global::System.String _PasswordHash;
+        partial void OnPasswordHashChanging(global::System.String value);
+        partial void OnPasswordHashChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String PasswordSalt
+        {
+            get
+            {
+                return _PasswordSalt;
+            }
+            set
+            {
+                OnPasswordSaltChanging(value);
+                ReportPropertyChanging("PasswordSalt");
+                _PasswordSalt = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("PasswordSalt");
+                OnPasswordSaltChanged();
+            }
+        }
+        private global::System.String _PasswordSalt;
+        partial void OnPasswordSaltChanging(global::System.String value);
+        partial void OnPasswordSaltChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String Email
+        {
+            get
+            {
+                return _Email;
+            }
+            set
+            {
+                OnEmailChanging(value);
+                ReportPropertyChanging("Email");
+                _Email = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Email");
+                OnEmailChanged();
+            }
+        }
+        private global::System.String _Email;
+        partial void OnEmailChanging(global::System.String value);
+        partial void OnEmailChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String Comment
+        {
+            get
+            {
+                return _Comment;
+            }
+            set
+            {
+                OnCommentChanging(value);
+                ReportPropertyChanging("Comment");
+                _Comment = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("Comment");
+                OnCommentChanged();
+            }
+        }
+        private global::System.String _Comment;
+        partial void OnCommentChanging(global::System.String value);
+        partial void OnCommentChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean Enabled
+        {
+            get
+            {
+                return _Enabled;
+            }
+            set
+            {
+                OnEnabledChanging(value);
+                ReportPropertyChanging("Enabled");
+                _Enabled = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Enabled");
+                OnEnabledChanged();
+            }
+        }
+        private global::System.Boolean _Enabled;
+        partial void OnEnabledChanging(global::System.Boolean value);
+        partial void OnEnabledChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime DateCreated
+        {
+            get
+            {
+                return _DateCreated;
+            }
+            set
+            {
+                OnDateCreatedChanging(value);
+                ReportPropertyChanging("DateCreated");
+                _DateCreated = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DateCreated");
+                OnDateCreatedChanged();
+            }
+        }
+        private global::System.DateTime _DateCreated;
+        partial void OnDateCreatedChanging(global::System.DateTime value);
+        partial void OnDateCreatedChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public Nullable<global::System.DateTime> DateLastLogin
+        {
+            get
+            {
+                return _DateLastLogin;
+            }
+            set
+            {
+                OnDateLastLoginChanging(value);
+                ReportPropertyChanging("DateLastLogin");
+                _DateLastLogin = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DateLastLogin");
+                OnDateLastLoginChanged();
+            }
+        }
+        private Nullable<global::System.DateTime> _DateLastLogin;
+        partial void OnDateLastLoginChanging(Nullable<global::System.DateTime> value);
+        partial void OnDateLastLoginChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public Nullable<global::System.DateTime> DateLastActivity
+        {
+            get
+            {
+                return _DateLastActivity;
+            }
+            set
+            {
+                OnDateLastActivityChanging(value);
+                ReportPropertyChanging("DateLastActivity");
+                _DateLastActivity = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DateLastActivity");
+                OnDateLastActivityChanged();
+            }
+        }
+        private Nullable<global::System.DateTime> _DateLastActivity;
+        partial void OnDateLastActivityChanging(Nullable<global::System.DateTime> value);
+        partial void OnDateLastActivityChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime DateLastPasswordChange
+        {
+            get
+            {
+                return _DateLastPasswordChange;
+            }
+            set
+            {
+                OnDateLastPasswordChangeChanging(value);
+                ReportPropertyChanging("DateLastPasswordChange");
+                _DateLastPasswordChange = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DateLastPasswordChange");
+                OnDateLastPasswordChangeChanged();
+            }
+        }
+        private global::System.DateTime _DateLastPasswordChange;
+        partial void OnDateLastPasswordChangeChanging(global::System.DateTime value);
+        partial void OnDateLastPasswordChangeChanged();
 
         #endregion
     
@@ -579,34 +901,62 @@ namespace webcsm.Models
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("webcsmModel", "FK_ProjectMembers_Projects", "Projects")]
-        public Project Project
+        [EdmRelationshipNavigationPropertyAttribute("webcsmModel", "UsersInProjects", "Projects")]
+        public EntityCollection<Project> Projects
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Project>("webcsmModel.FK_ProjectMembers_Projects", "Projects").Value;
-            }
-            set
-            {
-                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Project>("webcsmModel.FK_ProjectMembers_Projects", "Projects").Value = value;
-            }
-        }
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [BrowsableAttribute(false)]
-        [DataMemberAttribute()]
-        public EntityReference<Project> ProjectReference
-        {
-            get
-            {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Project>("webcsmModel.FK_ProjectMembers_Projects", "Projects");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Project>("webcsmModel.UsersInProjects", "Projects");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Project>("webcsmModel.FK_ProjectMembers_Projects", "Projects", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Project>("webcsmModel.UsersInProjects", "Projects", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("webcsmModel", "FK_Groups_Users", "Group")]
+        public EntityCollection<Group> Groups
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Group>("webcsmModel.FK_Groups_Users", "Group");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Group>("webcsmModel.FK_Groups_Users", "Group", value);
+                }
+            }
+        }
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("webcsmModel", "FK_Projects_Users", "Project")]
+        public EntityCollection<Project> ProjectsLeader
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Project>("webcsmModel.FK_Projects_Users", "Project");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Project>("webcsmModel.FK_Projects_Users", "Project", value);
                 }
             }
         }

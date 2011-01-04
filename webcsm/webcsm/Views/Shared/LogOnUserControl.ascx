@@ -2,7 +2,7 @@
 <%
     if (Request.IsAuthenticated) {
 %>
-        Welcome <b><%: Membership.GetUser().Email %></b>
+        Welcome <b><%: ((webcsm.WebcsmIdentity)Page.User.Identity).Email %></b>
         [ <%: Html.ActionLink("Log Off", "LogOff", "Account") %> ]
 <%
     }

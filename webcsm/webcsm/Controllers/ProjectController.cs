@@ -4,37 +4,43 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using webcsm.Models;
-using webcsm.ViewModels;
 using System.Web.Security;
+using webcsm.Helpers;
 
 namespace webcsm.Controllers
 {
     [Authorize]
     public class ProjectController : Controller
     {
-        private webcsmEntities db = new webcsmEntities();
+        IWebcsmRepository webcsmRepository;
+
+        //
+        // Dependency Injection enabled constructors
+
+        public ProjectController() : this(new EntityWebcsmRepository()) { }
+
+        public ProjectController(IWebcsmRepository repository)
+        {
+            webcsmRepository = repository;
+        }
+        
         //
         // GET: /Project/
 
         public ActionResult Index()
         {
-            List<GroupWithProjects> groups = new List<GroupWithProjects>();
+            IQueryable<Group> usersGroups = webcsmRepository.GetUserGroups(User.Identity.Name);
+            
+            return View(usersGroups);
+        }
 
-            List<Group> usersGroups = (from g in db.Groups where g.UserName == User.Identity.Name select g).ToList<Group>();
 
-            foreach (var item in usersGroups)
-	        {
-		        groups.Add(new GroupWithProjects { Group = item, Projects = item.Projects.ToList<Project>() });
+        public JsonResult FindUsers(string searchText, int maxResults = 10)
+        {
+            var result = webcsmRepository.GetAllUsersEmail(User.Identity.Name);
 
-        	}
 
-            var returnModel = new ProjectViewModel
-            {
-                Groups = groups
-                
-                //Projects = (from p in db.Projects where p.LeaderName == User.Identity.Name select p).ToList<Project>()
-            };
-            return View(returnModel);
+            return Json(result.Take(maxResults).ToList(), JsonRequestBehavior.AllowGet);
         }
 
         //
@@ -50,49 +56,39 @@ namespace webcsm.Controllers
 
         public ActionResult Create()
         {
-            ViewData["Groups"] = (from g in db.Groups where g.UserName == User.Identity.Name select g).ToList<Group>();
-            MembershipUserCollection users = Membership.GetAllUsers();
-            users.Remove(User.Identity.Name);
-            ViewData["AvailableUsers"] = new SelectList(users,"UserName", "Email");
-            ViewData["SelectedUsers"] = new SelectList(new List<MembershipUser>(), "UserName", "Email");
- 
+            ProjectFormViewModel projectForm = new ProjectFormViewModel()
+            {
+                UserGroups = new SelectList(webcsmRepository.GetUserGroups(User.Identity.Name), "Id", "Name")
+            };
 
-            return View();
+
+            return View(projectForm);
         } 
 
         //
         // POST: /Project/Create
-        [ValidateInput(false)]
         [HttpPost]
-        public ActionResult Create([Bind(Exclude = "Id,LeaderName")] Project projectToCreate)
+        public ActionResult Create([Bind(Prefix = "Project")]Project projectToCreate, string usersList)
         {
-            try
+            
+            if (ModelState.IsValid)
             {
-                if (!ModelState.IsValid)
-                    return View();
-
-                string groupId = Request["GroupID"];
-                var groupids = groupId.Split(',');
-                foreach (var item in groupids)
-                {
-                    int id = int.Parse(item);
-                    Group group = db.Groups.Where(g => g.Id == id).First();
-                    projectToCreate.Groups.Add(group);                    
-                }
-
-
-                projectToCreate.LeaderName = User.Identity.Name;
-                
-                db.AddToProjects(projectToCreate);
-
-                db.SaveChanges();
+                webcsmRepository.AddLeaderToProject(projectToCreate, User.Identity.Name);
+                webcsmRepository.AddUsersToProject(projectToCreate, CommaSerializator.Deserialize(usersList));
+                webcsmRepository.CreateProject(projectToCreate);
+                webcsmRepository.Save();
 
                 return RedirectToAction("Index");
             }
-            catch
+
+            ProjectFormViewModel projectForm = new ProjectFormViewModel()
             {
-                return View();
-            }
+                UserGroups = new SelectList(webcsmRepository.GetUserGroups(User.Identity.Name), "Id", "Name"),
+                Project = projectToCreate
+            };
+
+
+            return View(projectForm);
         }
 
         //
@@ -107,24 +103,19 @@ namespace webcsm.Controllers
         // POST: /Project/CreateGroup
 
         [HttpPost]
-        public ActionResult CreateGroup([Bind(Exclude = "Id,UserName")] Group groupToCreate)
+        public ActionResult CreateGroup(Group groupToCreate)
         {
-            try
+            if (ModelState.IsValid)
             {
-                if (!ModelState.IsValid)
-                    return View();
-
-                groupToCreate.UserName = User.Identity.Name;
-                db.AddToGroups(groupToCreate);
-
-                db.SaveChanges();
+                webcsmRepository.AddUserToGroup(groupToCreate, User.Identity.Name);
+                webcsmRepository.CreateGroup(groupToCreate);
+                webcsmRepository.Save();
 
                 return RedirectToAction("Index");
             }
-            catch
-            {
-                return View();
-            }
+
+
+            return View(groupToCreate);
         }
         
         //
@@ -153,30 +144,31 @@ namespace webcsm.Controllers
             }
         }
 
-        //
-        // GET: /Project/Delete/5
+        // TODO: Delete projects and groups
+        ////
+        //// GET: /Project/Delete/5
  
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
+        //public ActionResult Delete(int id)
+        //{
+        //    return View();
+        //}
 
-        //
-        // POST: /Project/Delete/5
+        ////
+        //// POST: /Project/Delete/5
 
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
+        //[HttpPost]
+        //public ActionResult Delete(int id, FormCollection collection)
+        //{
+        //    try
+        //    {
+        //        // TODO: Add delete logic here
  
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
+        //        return RedirectToAction("Index");
+        //    }
+        //    catch
+        //    {
+        //        return View();
+        //    }
+        //}
     }
 }

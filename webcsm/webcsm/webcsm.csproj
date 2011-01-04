@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Altairis.Web.Security">
+      <HintPath>..\..\..\AltairisWebSecurity-1.5.1\AltairisWebSecurity-1.5.1-bin\Altairis.Web.Security.dll</HintPath>
+    </Reference>
     <Reference Include="DotNetOpenAuth">
       <HintPath>..\..\..\DotNetOpenAuth-3.4.5.10202\DotNetOpenAuth-3.4.5.10202\DotNetOpenAuth-3.4.5.10202\Bin\DotNetOpenAuth.dll</HintPath>
     </Reference>
@@ -77,16 +80,22 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\CommaSerializator.cs" />
     <Compile Include="Helpers\RandomStringGenerator.cs" />
     <Compile Include="Helpers\ResourcesHelper.cs" />
     <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\Group\Group.cs" />
+    <Compile Include="Models\Project\Project.cs" />
+    <Compile Include="Models\IProjectRepository.cs" />
+    <Compile Include="Models\EntityProjectRepository.cs" />
+    <Compile Include="Models\Project\ProjectFormViewModel.cs" />
     <Compile Include="Models\webcsm.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>webcsm.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\WebcsmIdentity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModels\ProjectViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\webcsm.mdf" />
@@ -95,6 +104,34 @@
     </Content>
     <Content Include="Content\css\accordion.css" />
     <Content Include="Content\css\site.css" />
+    <Content Include="Content\css\themes\base\images\ui-anim_basic_16x16.gif" />
+    <Content Include="Content\css\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Content\css\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Content\css\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Content\css\themes\base\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Content\css\themes\base\images\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Content\css\themes\base\images\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Content\css\themes\base\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Content\css\themes\base\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Content\css\themes\base\images\ui-icons_222222_256x240.png" />
+    <Content Include="Content\css\themes\base\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Content\css\themes\base\images\ui-icons_454545_256x240.png" />
+    <Content Include="Content\css\themes\base\images\ui-icons_888888_256x240.png" />
+    <Content Include="Content\css\themes\base\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Content\css\themes\base\jquery.ui.accordion.css" />
+    <Content Include="Content\css\themes\base\jquery.ui.all.css" />
+    <Content Include="Content\css\themes\base\jquery.ui.autocomplete.css" />
+    <Content Include="Content\css\themes\base\jquery.ui.base.css" />
+    <Content Include="Content\css\themes\base\jquery.ui.button.css" />
+    <Content Include="Content\css\themes\base\jquery.ui.core.css" />
+    <Content Include="Content\css\themes\base\jquery.ui.datepicker.css" />
+    <Content Include="Content\css\themes\base\jquery.ui.dialog.css" />
+    <Content Include="Content\css\themes\base\jquery.ui.progressbar.css" />
+    <Content Include="Content\css\themes\base\jquery.ui.resizable.css" />
+    <Content Include="Content\css\themes\base\jquery.ui.slider.css" />
+    <Content Include="Content\css\themes\base\jquery.ui.tabs.css" />
+    <Content Include="Content\css\themes\base\jquery.ui.theme.css" />
+    <Content Include="Content\css\themes\ui-lightness\jquery.ui.base.css" />
     <Content Include="Content\images\files.png" />
     <Content Include="Content\images\google_logo.jpg" />
     <Content Include="Content\images\notes.png" />
@@ -103,10 +140,13 @@
     <Content Include="Content\images\tasks.png" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\accordion.js" />
-    <Content Include="Scripts\UsersListBoxes.js" />
+    <Content Include="Scripts\jquery-1.4.2.min.js" />
+    <Content Include="Scripts\jquery-ui-1.8.custom.min.js" />
+    <Content Include="Scripts\MicrosoftMvcJQueryValidation.js" />
     <Content Include="Scripts\openIdUrl.js" />
     <Content Include="Views\Project\Create.aspx" />
     <Content Include="Views\Project\CreateGroup.aspx" />
+    <Content Include="Views\Project\GroupUserControl.ascx" />
     <Content Include="Views\Project\Index.aspx" />
     <Content Include="Views\Shared\MainMenu.ascx" />
     <Content Include="Views\Shared\ProjectView.ascx" />
@@ -148,7 +188,6 @@
       <LastGenOutput>webcsm.Designer.cs</LastGenOutput>
     </EntityDeploy>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
